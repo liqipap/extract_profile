@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+import shutil
 from imp import reload
 reload(sys)
 
@@ -21,7 +22,7 @@ code_dic = {b'java': 0, b'dotnet': 0, b'hadoop': 0, b'ruby': 0, b'python': 0, b'
 #email service company
 email_service_dic={}
 
-#age ranges from 1970 to 1988
+#years ranges from 1970 to 1988
 age_dic = {}
 
 
@@ -63,7 +64,7 @@ def print_status_3():
 # match code with age
 def match_age_code(line, code_key):
   code_match = re.search(b'.*'+ code_key +b'.*', line)
-  email_match = re.search(b'\s+(\w+\S*)@(\w+\S*)\s+', line)
+  email_match = re.search(b'\s+(\w+\S*)@(\w+\S*\.+\S*)\s+', line)
   #
   if email_match:
     email_addr = email_match.group(1).lower() + b'@' + email_match.group(2).lower()
@@ -71,7 +72,7 @@ def match_age_code(line, code_key):
     # no email match? im out
     return True
   
-  for a in range(1970, 1988):
+  for a in range(1970, 2015):
     #
     age_match = re.search(b'.*'+str.encode(str(a))+b'.*', line)
     #
@@ -97,8 +98,12 @@ def match_age_code(line, code_key):
       #
       if gen_file:
         file_handle = open (b'results/'+ b'_____1_age_' + age_key + b'.txt', 'a' )
-        file_handle.write('\n'+email_addr.decode())
-        file_handle.close()
+        try:
+          file_handle.write('\n'+email_addr.decode())
+        except:
+          print("decoing error 3")
+        finally:
+          file_handle.close()
       return 
     #end for loop
   return
@@ -106,7 +111,7 @@ def match_age_code(line, code_key):
 # match the programming language
 def match_code(line, code_key):
   code_match = re.search(b'.*'+ code_key +b'.*', line)
-  email_match = re.search(b'\s+(\w+\S*)@(\w+\S*)\s+', line)
+  email_match = re.search(b'\s+(\w+\S*)@(\w+\S*\.+\S*)\s+', line)
   if email_match:
     email_addr = email_match.group(1).lower() + b'@' + email_match.group(2).lower()
   else:
@@ -121,48 +126,66 @@ def match_code(line, code_key):
     #
     if gen_file:
       file_handle = open (b'results/'+ b'_____1_' + code_key + b'.txt', 'a' )
-      file_handle.write('\n'+email_addr.decode())
-      file_handle.close()
+      try:
+        file_handle.write('\n'+email_addr.decode())
+      except:
+        print("decoing error 2")
+      finally:
+        file_handle.close()
     return True
   else:
     return False
     
-      
-with open('db.sql', 'rb') as fp:
-  if True:
-    for line in fp:
-        total_records += 1
-        if total_records % 10000 == 0:
-          if print_en:
-            print_status_2()
-            print_status_3()
-          print("current total_records is %d"%total_records)
+#start the code here
+if __name__=='__main__':
+  #clean up the files
+  shutil.rmtree('results')
+  # 
+  os.makedirs('results')
+  
+  with open('db.sql', 'rb') as fp:
+    if True:
+      for line in fp:
+          total_records += 1
+          if total_records % 10000 == 0:
+            if print_en:
+              print_status_2()
+              print_status_3()
+            print("current total_records is %d"%total_records)
 
-        # match the email service provider
-        email_match = re.search(b'\s+(\w+\S*)@(\w+\S*)\s+', line)
-        if email_match:
-          tmp_key = email_match.group(2).lower()
-          email_addr = email_match.group(1).lower() + b'@' + email_match.group(2).lower()
-          if tmp_key in email_service_dic.keys():
-            email_service_dic[tmp_key] +=1
-            if gen_file:
-              file_handle = open (b'results/'+tmp_key+b'.txt', 'a' )
-              file_handle.write('\n'+email_addr.decode())
-              file_handle.close()
-          else:
-            email_service_dic[tmp_key] = 1
+          # match the email service provider
+          email_match = re.search(b'\s+(\w+\S*)@(\w+\S*\.+\S*)\s+', line)
+          if email_match:
+            tmp_key = email_match.group(2).lower()
+            email_addr = email_match.group(1).lower() + b'@' + email_match.group(2).lower()
+            if tmp_key in email_service_dic.keys():
+              email_service_dic[tmp_key] +=1
+              if gen_file:
+                try:
+                  file_handle = open (b'results/'+tmp_key+b'.txt', 'a' )
+                except:
+                  break
+                
+                try:
+                  file_handle.write('\n'+email_addr.decode())
+                except:
+                  print("decoing error 1")
+                finally:
+                  file_handle.close()
+            else:
+              email_service_dic[tmp_key] = 1
 
-        #match programming language 
-        for k in code_dic.keys():
-          if match_code(line, k): break
+          #match programming language 
+          for k in code_dic.keys():
+            if match_code(line, k): break
 
-        #match code and age
-        match_age_code(line, k)
+          #match code and age
+          match_age_code(line, k)
 
 
-print_status_1()
-print_status_2()
-print_status_3()
+  print_status_1()
+  print_status_2()
+  print_status_3()
 
   
 
