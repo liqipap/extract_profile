@@ -35,35 +35,35 @@ def print_status_1():
     if final_rpt_en:
       file_handle = open (b'rpt.txt', 'a' )
       file_handle.write('\nEmail service providers.......................')
-      file_handle.write('\n' + k.decode() + ' : ' + v.decode())
+      file_handle.write('\n' + k.decode() + ' : ' + str(v))
       file_handle.close()
 
 
-def print_status_2(wr):
+def print_status_2():
   print("current No. of candidates in each programming language.......................")
   for k, v in sorted(code_dic.items(), key=lambda d: d[1]):
     print('total No. of %s developers is ： %d'%(k,v))
     if final_rpt_en:
       file_handle = open (b'rpt.txt', 'a' )
       file_handle.write('\ncurrent No. of candidates in each programming language............')
-      file_handle.write('\ntotal No. of ' + k.decode() + ' developers is ： ' + v.decode())
+      file_handle.write('\ntotal No. of ' + k.decode() + ' developers is ： ' + str(v))
       file_handle.close()
 
-def print_status_3(wr):
+def print_status_3():
   print("current age data.......................")
   for k, v in sorted(age_dic.items(), key=lambda d: d[1]):
     print('total No. of developers (Age: %s) is ： %d'%(k,v))
     if final_rpt_en:
       file_handle = open (b'rpt.txt', 'a' )
       file_handle.write('\current age data...............................')
-      file_handle.write('\ntotal No. of developers Age ： ' + k.decode() + ' is : ' + v.decode())
+      file_handle.write('\ntotal No. of developers Age ： ' + k.decode() + ' is : ' + str(v))
       file_handle.close()
 
 
 # match code with age
 def match_age_code(line, code_key):
   code_match = re.search(b'.*'+ code_key +b'.*', line)
-  email_match = re.search(b'\s*(\w*\.*\w+)@(\w+\.\w+\.*\w*)\s*', line)
+  email_match = re.search(b'\s+(\w+\S*)@(\w+\S*)\s+', line)
   #
   if email_match:
     email_addr = email_match.group(1).lower() + b'@' + email_match.group(2).lower()
@@ -106,7 +106,7 @@ def match_age_code(line, code_key):
 # match the programming language
 def match_code(line, code_key):
   code_match = re.search(b'.*'+ code_key +b'.*', line)
-  email_match = re.search(b'\s*(\w*\.*\w+)@(\w+\.\w+\.*\w*)\s*', line)
+  email_match = re.search(b'\s+(\w+\S*)@(\w+\S*)\s+', line)
   if email_match:
     email_addr = email_match.group(1).lower() + b'@' + email_match.group(2).lower()
   else:
@@ -138,8 +138,8 @@ with open('db.sql', 'rb') as fp:
             print_status_3()
           print("current total_records is %d"%total_records)
 
-        # match the email service provider  
-        email_match = re.search(b'\s*(\w*\.*\w+)@(\w+\.\w+\.*\w*)\s*', line)
+        # match the email service provider
+        email_match = re.search(b'\s+(\w+\S*)@(\w+\S*)\s+', line)
         if email_match:
           tmp_key = email_match.group(2).lower()
           email_addr = email_match.group(1).lower() + b'@' + email_match.group(2).lower()
