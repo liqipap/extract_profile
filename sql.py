@@ -35,7 +35,6 @@ def print_status_1():
     if v > 10: print("%s : %d" %(k,v))
     if final_rpt_en:
       file_handle = open (b'rpt.txt', 'a' )
-      file_handle.write('\nEmail service providers.......................')
       file_handle.write('\n' + k.decode() + ' : ' + str(v))
       file_handle.close()
 
@@ -46,7 +45,6 @@ def print_status_2():
     print('total No. of %s developers is ： %d'%(k,v))
     if final_rpt_en:
       file_handle = open (b'rpt.txt', 'a' )
-      file_handle.write('\ncurrent No. of candidates in each programming language............')
       file_handle.write('\ntotal No. of ' + k.decode() + ' developers is ： ' + str(v))
       file_handle.close()
 
@@ -56,7 +54,6 @@ def print_status_3():
     print('total No. of developers (Age: %s) is ： %d'%(k,v))
     if final_rpt_en:
       file_handle = open (b'rpt.txt', 'a' )
-      file_handle.write('\current age data...............................')
       file_handle.write('\ntotal No. of developers Age ： ' + k.decode() + ' is : ' + str(v))
       file_handle.close()
 
